@@ -1,75 +1,80 @@
-import { View, Text } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StyleSheet, StatusBar, Image} from 'react-native';
-import { 
-  useFonts, 
+import {
+  useFonts,
   Manrope_300Light,
   Manrope_400Regular,
+  Manrope_500Medium,
   Manrope_600SemiBold,
-  Manrope_700Bold
+  Manrope_700Bold,
 } from '@expo-google-fonts/manrope';
+import { createNativeStackNavigator } from 'expo-router/native-stack';
 
-export  default function ProfileScreen(){
-      let [fontsLoaded] = useFonts({
-        Manrope_300Light,
-        Manrope_400Regular,
-        Manrope_600SemiBold,
-        Manrope_700Bold,
-    });
-    if (!fontsLoaded) {
-        return null;
-    }
-    return (
-        <SafeAreaView style ={styles.safeArea}>
-                <StatusBar hidden={false}/>
-                <View style={styles.container}>
-                    <Image style={styles.logo} source={require("../../assets/img/logo.png")}/>
-                    <View style={styles.info}>
-                        <Image style={styles.avatar} source={require("../../assets/img/User.png")} />
-                        <Text style={styles.name}>Students</Text>
-                        <Text style={styles.email}>students@example.com</Text>
-                    </View>
-               </View>
-        </SafeAreaView> 
-    );
+import type { ProfileStackParamList } from '@/navigation/profile-stack-types';
+import NotificationsScreen from '@/screens/notifications';
+import NutritionSettingsScreen from '@/screens/nutrition-settings';
+import PersonalDataScreen from '@/screens/personal-data';
+import ProfileMainScreen from '@/screens/profile-main';
+import SupportScreen from '@/screens/support';
+
+const Stack = createNativeStackNavigator<ProfileStackParamList>();
+
+// Вкладка «Профиль» — это Stack Navigator: ProfileMain + 4 детальных экрана.
+// Возврат назад работает «из коробки»: кнопка в хедере, кнопка «Назад» на Android
+// и свайп от левого края на iOS (gestureEnabled включён по умолчанию).
+export default function ProfileStack() {
+  const [fontsLoaded] = useFonts({
+    Manrope_300Light,
+    Manrope_400Regular,
+    Manrope_500Medium,
+    Manrope_600SemiBold,
+    Manrope_700Bold,
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
+  return (
+    <Stack.Navigator
+      initialRouteName="ProfileMain"
+      screenOptions={{
+        headerStyle: { backgroundColor: '#F6FAFC' },
+        headerShadowVisible: false,
+        headerTintColor: '#168CE1',
+        headerTitleStyle: {
+          fontFamily: 'Manrope_600SemiBold',
+          fontSize: 17,
+          color: '#192C38',
+        },
+        headerBackButtonDisplayMode: 'minimal',
+        gestureEnabled: true,
+        contentStyle: { backgroundColor: '#F6FAFC' },
+      }}
+    >
+      <Stack.Screen
+        name="ProfileMain"
+        component={ProfileMainScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="PersonalData"
+        component={PersonalDataScreen}
+        options={{ title: 'Личные данные' }}
+      />
+      <Stack.Screen
+        name="NutritionSettings"
+        component={NutritionSettingsScreen}
+        options={{ title: 'Настройки питания' }}
+      />
+      <Stack.Screen
+        name="Notifications"
+        component={NotificationsScreen}
+        options={{ title: 'Уведомления' }}
+      />
+      <Stack.Screen
+        name="Support"
+        component={SupportScreen}
+        options={{ title: 'Служба поддержки' }}
+      />
+    </Stack.Navigator>
+  );
 }
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-  },
-  container: {
-    flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: 10,
-    backgroundColor: '#F6FAFC'
-  },
-  logo: {
-    width: 65,
-    height: 52,
-  },
-  info: {
-    backgroundColor: '#ffffff',
-    borderRadius: 22,
-    paddingBottom: 30,
-    paddingTop: 30,
-    alignItems: 'center',
-
-  },
-  avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 26,
-  },
-  name: {
-    fontFamily: 'Manrope_700Bold',
-    fontSize: 24,
-    color: '#222222',
-  },    
-  email: {
-    fontFamily: 'Manrope_400Regular',
-    fontSize: 14,
-    color: '#9a9a9b',
-  },
-});
